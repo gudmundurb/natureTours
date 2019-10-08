@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 process.on('uncaughtException', err => {
-  console.log(err.name, err.message);
   console.log('CRITICAL ERROR - UNCAUGHT EXPECTION! Shutting down...');
+  console.log(err.name, err.message);
   process.exit(1);
 });
 
@@ -32,8 +32,8 @@ const server = app.listen(PORT, () => {
 });
 
 process.on('unhandledRejection', err => {
-  console.log(err.name, err.message);
   console.log('CRITICAL ERROR - UNHANDLED REJECTION! Shutting down...');
+  console.log(err.name, err.message);
   //shutting down gracefully
   server.close(() => {
     process.exit(1);
