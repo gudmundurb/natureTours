@@ -12,6 +12,7 @@
   "author": "Gudmundur Ellert",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^8.1.0",
     "eslint-plugin-react-hooks": "^2.1.1",
     "express": "^4.17.1",

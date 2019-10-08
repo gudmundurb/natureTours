@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -35,9 +36,23 @@ const userSchema = new mongoose.Schema({
       //this only works on CREATE and SAVE
       validator: function(el) {
         return el === this.password;
-      }
+      },
+      message: 'Passwords do not match'
     }
   }
+});
+
+userSchema.pre('save', async function(next) {
+  //if password was not modified, return
+  if (!this.isModified('password')) {
+    return next();
+  }
+  //12 is the cost on cpu
+  this.password = await bcrypt.hash(this.password, 12);
+  //we don't need confirm after previously checking from user
+  this.passwordConfirm = undefined;
+
+  next();
 });
 
 const User = mongoose.model('User', userSchema);
