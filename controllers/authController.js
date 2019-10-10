@@ -14,6 +14,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
+    role: req.body.role,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt
@@ -88,3 +89,33 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  //this is a middleware function wrapped within a function
+  return (req, res, next) => {
+    //roles is an array of users
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError(
+          'Access denied, you do not have permission for this action!',
+          403
+        )
+      );
+    }
+
+    next();
+  };
+};
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  //1 get user email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError('There is no user with that email address', 404));
+  }
+  //2 make random token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+  //3 send back token as a email
+});
+exports.resetPassword = (req, res, next) => {};
