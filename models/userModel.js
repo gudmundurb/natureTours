@@ -6,25 +6,16 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'A user must have a name'],
-    trim: true,
-    maxlength: [40, 'A user name must have less or equal then 40 characters'],
-    minlength: [10, 'A user name must have lengt of 10 characters or more']
-    // validate: [validator.isAlpha, 'Tour name must only contain characters']
+    required: [true, 'Please tell us your name!']
   },
   email: {
     type: String,
-    required: [true, 'A user must have a email'],
+    required: [true, 'Please provide your email'],
     unique: true,
     lowercase: true,
-    trim: true,
-    maxlength: [50, 'A user email must have less or equal then 50 characters'],
-    minlength: [7, 'A user email must have lengt of 7 characters or more'],
-    validate: [validator.isEmail, 'Email is not valid']
+    validate: [validator.isEmail, 'Please provide a valid email']
   },
-  photo: {
-    type: String
-  },
+  photo: String,
   role: {
     type: String,
     enum: ['user', 'guide', 'lead-guide', 'admin'],
@@ -32,36 +23,53 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'A user must have a password'],
-    minlength: [8, 'A user password must have lengt of 8 characters or more'],
+    required: [true, 'Please provide a password'],
+    minlength: 8,
     select: false
   },
   passwordConfirm: {
     type: String,
-    required: [true, 'Please confirm the password'],
+    required: [true, 'Please confirm your password'],
     validate: {
-      //this only works on CREATE and SAVE
+      // This only works on CREATE and SAVE!!!
       validator: function(el) {
         return el === this.password;
       },
-      message: 'Passwords do not match'
+      message: 'Passwords are not the same!'
     }
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpires: Date
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 });
 
 userSchema.pre('save', async function(next) {
-  //if password was not modified, return
-  if (!this.isModified('password')) {
-    return next();
-  }
-  //12 is the cost on cpu
-  this.password = await bcrypt.hash(this.password, 12);
-  //we don't need confirm after previously checking from user
-  this.passwordConfirm = undefined;
+  // Only run this function if password was actually modified
+  if (!this.isModified('password')) return next();
 
+  // Hash the password with cost of 12
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // Delete passwordConfirm field
+  this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.pre('save', function(next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+userSchema.pre(/^find/, function(next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
   next();
 });
 
@@ -74,7 +82,6 @@ userSchema.methods.correctPassword = async function(
 
 userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   if (this.passwordChangedAt) {
-    console.log(this.passwordChangedAt, JWTTimestamp);
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
       10
@@ -89,23 +96,19 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
 
 userSchema.methods.createPasswordResetToken = function() {
   const resetToken = crypto.randomBytes(32).toString('hex');
-  console.log(
-    `This is resetToken after crypto randomByte in createPasswordResetToken function: ${resetToken}`
-  );
-  this.passWordResetToken = crypto
+
+  this.passwordResetToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
 
+  console.log({ resetToken }, this.passwordResetToken);
+
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-  console.log(
-    `\nThis is passwordResetToken: ${resetToken}, And this would be ResetExpires: ${
-      this.passwordResetExpires
-    }, This is current date: ${Date.now()})`
-  );
 
   return resetToken;
 };
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
