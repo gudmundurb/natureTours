@@ -89,14 +89,21 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
 
 userSchema.methods.createPasswordResetToken = function() {
   const resetToken = crypto.randomBytes(32).toString('hex');
-
+  console.log(
+    `This is resetToken after crypto randomByte in createPasswordResetToken function: ${resetToken}`
+  );
   this.passWordResetToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-  console.log(resetToken, this.passwordResetExpires, this.passWordResetToken);
+  console.log(
+    `\nThis is passwordResetToken: ${resetToken}, And this would be ResetExpires: ${
+      this.passwordResetExpires
+    }, This is current date: ${Date.now()})`
+  );
+
   return resetToken;
 };
 const User = mongoose.model('User', userSchema);
