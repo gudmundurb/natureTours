@@ -67,6 +67,7 @@ userSchema.pre('save', function(next) {
   next();
 });
 
+//allows only active user documents to show
 userSchema.pre(/^find/, function(next) {
   // this points to the current query
   this.find({ active: { $ne: false } });
