@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+//not needed for referencing (needed for embedding)
+//const User = require('./userModel');
 // const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
@@ -85,7 +87,7 @@ const tourSchema = new mongoose.Schema(
         enum: ['Point']
       },
       //longitude first then latitude (different in google maps)
-      //example thingvellir : 64.214544, -21.245716
+      //example thingvellir langitude and longitude: 64.214544, -21.245716
       coordinates: [Number],
       address: String,
       description: String
@@ -102,7 +104,11 @@ const tourSchema = new mongoose.Schema(
         description: String,
         day: Number
       }
-    ]
+    ],
+    //this imnplementation for embedding
+    //guides: Array
+    //this implementation for referencing
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }]
   },
   {
     toJSON: { virtuals: true },
@@ -119,10 +125,13 @@ tourSchema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
-tourSchema.pre('save', function(next) {
-  this.slug = slugify(this.name, { lower: true });
-  next();
-});
+
+//embedding example
+// tourSchema.pre('Save', async function(next) {
+// const guidesPromises = this.guides.map(async id => await User.findById(id));
+// await Promise.all(guidesPromises);
+// next();
+// });
 
 // tourSchema.pre('save', function(next) {
 //   console.log('Will save document...');
