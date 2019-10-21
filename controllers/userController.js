@@ -20,18 +20,18 @@ exports.getAllUsers = (req, res) => {
     message: 'This route is not yet implemented'
   });
 };
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  //Get all users!
-  const users = await User.find();
-  //Send response!
-  res.status(200).json({
-    status: 'Success',
-    results: users.length,
-    data: {
-      users
-    }
-  });
-});
+// exports.getAllUsers = catchAsync(async (req, res, next) => {
+//   //Get all users!
+//   const users = await User.find();
+//   //Send response!
+//   res.status(200).json({
+//     status: 'Success',
+//     results: users.length,
+//     data: {
+//       users
+//     }
+//   });
+// });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   //1 create error if user posts password data
@@ -68,22 +68,14 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet implemented'
-  });
-};
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route is not yet implemented'
+    message: 'This route is not implemented, please use signup instead.'
   });
 };
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet implemented'
-  });
-};
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+//Do NOT update password with this!
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);

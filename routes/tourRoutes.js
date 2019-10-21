@@ -30,6 +30,7 @@ router
     authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour
   );
+console.log('Tour Routes loaded successfully...');
 
 module.exports = router;
 

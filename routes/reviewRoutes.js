@@ -13,17 +13,24 @@ router
   .post(
     authController.protect,
     authController.restrictTo('user'),
+    reviewController.setTourUserIds,
     reviewController.createReview
   );
 
 router
   .route('/:id')
+  .get(reviewController.getReview)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin'),
+    reviewController.updateReview
+  )
   .delete(
     authController.protect,
     authController.restrictTo('admin'),
     reviewController.deleteReview
   );
-
+console.log('Review Routes loaded successfully...');
 module.exports = router;
 // router
 //   .route('/:tourId/reviews')
