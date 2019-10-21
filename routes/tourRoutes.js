@@ -1,6 +1,7 @@
 const express = require('express');
 const tourController = require('../controllers/tourController');
 const authController = require('./../controllers/authController');
+const reviewController = require('../controllers/reviewController');
 
 const router = express.Router();
 
@@ -27,7 +28,17 @@ router
     tourController.deleteTour
   );
 
+router
+  .route('/:tourId/reviews')
+  .post(
+    authController.protect,
+    authController.restrictTo('user'),
+    reviewController.createReview
+  );
 module.exports = router;
+//POST /tour/(id)/reviews (user from authcontroller)
+//GET /tour/(id)/reviews (get all reviews with that id)
+//GET /tour(id)/reviews/(id) -> get the reviews on that tour with that id
 
 //deprecated code :
 //----------------------//
