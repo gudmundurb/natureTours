@@ -7,11 +7,13 @@ const router = express.Router({ mergeParams: true });
 
 //router.param('id', tourController.checkID);
 
+//user needs to be logged in for all routes from here!
+router.use(authController.protect);
+
 router
   .route('/')
   .get(reviewController.getAllReviews)
   .post(
-    authController.protect,
     authController.restrictTo('user'),
     reviewController.setTourUserIds,
     reviewController.createReview
@@ -21,13 +23,11 @@ router
   .route('/:id')
   .get(reviewController.getReview)
   .patch(
-    authController.protect,
-    authController.restrictTo('admin'),
+    authController.restrictTo('user', 'admin'),
     reviewController.updateReview
   )
   .delete(
-    authController.protect,
-    authController.restrictTo('admin'),
+    authController.restrictTo('user', 'admin'),
     reviewController.deleteReview
   );
 console.log('Review Routes loaded successfully...');

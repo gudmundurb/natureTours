@@ -4,11 +4,7 @@ const reviewSchema = new mongoose.Schema(
   {
     review: {
       type: String,
-      required: [true, 'Review can not be empty'],
-      unique: true,
-      trim: true,
-      maxlength: [500, "A review can't have more than 500 characters"],
-      minlength: [10, 'A review must have lengt of 10 characters or more']
+      required: [true, 'Review can not be empty']
     },
     rating: {
       type: Number,
