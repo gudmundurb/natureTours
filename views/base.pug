@@ -1,12 +1,13 @@
 doctype html
 html
   head
-    meta(charset='UTF-8')
-    meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    link(rel='stylesheet', href='/css/style.css')
-    link(rel='shortcut icon', href='/img/favicon.png', type='image/png')
-    link(rel='stylesheet', 'https://fonts.googleapis.com/css?family=Lato:300,300i,700')
-    title Nature Tours | #{title}
+    block head
+      meta(charset='UTF-8')
+      meta(name='viewport' content='width=device-width, initial-scale=1.0')
+      link(rel='stylesheet', href='/css/style.css')
+      link(rel='shortcut icon', href='/img/favicon.png', type='image/png')
+      link(rel='stylesheet', 'https://fonts.googleapis.com/css?family=Lato:300,300i,700')
+      title Nature Tours | #{title}
   body
 
     // HEADER
@@ -19,5 +20,11 @@ html
 
     // FOOTER
     include _footer
+
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js')
+    script(src='/js/mapbox.js')
+    script(src='/js/login.js')
+    script(src='/js/signup.js')
+
 
 
