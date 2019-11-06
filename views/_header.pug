@@ -5,11 +5,12 @@ header.header
   .header__logo
     img(src='/img/logo-white.png' alt='Nature tours logo')
   nav.nav.nav--user
-    //- a.nav__el(href='#') My bookings
-    //- a.nav__el(href='#')
-    //-   img(src='img/user.jpg' alt='User photo')
-    //-   span Gudmundur
-  a.nav__el(href='/login') Login
-  
-  //need to implement
-  a.nav__el.nav__el--cta(href='/signup') Signup 
+    if user
+      a.nav__el.nav__el--logout Log out
+      a.nav__el(href='#')
+        img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo off ${user.name}`)
+        span= user.name.split(' ')[0]
+    else
+      a.nav__el(href='/login') Login
+      -//need to implement
+      a.nav__el.nav__el--cta(href='/signup') Signup 

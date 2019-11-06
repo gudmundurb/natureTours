@@ -10,7 +10,7 @@ exports.deleteOne = Model =>
       return next(new AppError('No document found with that ID', 404));
     }
     res.status(204).json({
-      status: 'Success',
+      status: 'success',
       data: null
     });
   });
@@ -20,7 +20,7 @@ exports.createOne = Model =>
     const newDoc = await Model.create(req.body);
 
     res.status(201).json({
-      status: 'Success',
+      status: 'success',
       data: {
         data: newDoc
       }
@@ -83,7 +83,7 @@ exports.getAll = Model =>
     const doc = await features.query;
     //Send response!
     res.status(200).json({
-      status: 'Success',
+      status: 'success',
       results: doc.length,
       data: {
         data: doc
